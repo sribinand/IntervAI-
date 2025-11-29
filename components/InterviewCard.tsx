@@ -23,12 +23,13 @@ const InterviewCard = ({
   ).format("MMM D, YYYY");
 
   return (
-    <div className="card-border w-[360px]  max-sm:w-full min-h-96">
-      <div className="card-interview">
+      <div className="card-border w-full h-full min-h-96 flex flex-col">
+     <div className="card-interview flex flex-col justify-between h-full">
+
 
         {/* HEADER */}
         <div>
-          <div className="absolute top-0 right-0 w-fit px-4 py-2 rounded-bl-lg bg-light-600">
+          <div className="absolute top-0 right-0 w-fit px-4 py-2 rounded-bl-lg bg-light-600 ">
             <p className="badge-text">{normalizedType}</p>
           </div>
 

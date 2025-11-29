@@ -5,8 +5,21 @@ import { ClipboardList, Video } from 'lucide-react'
 import React from 'react'
 import { dummyInterviews } from '@/constants'
 import InterviewCard from '@/components/InterviewCard'
+import { getCurrentUser, getInterviewsByUserId, getLatestInterviews } from '@/lib/actions/auth.action'
 
-const Page = () => {
+const Page = async () => {
+  const user = await getCurrentUser();
+
+  const userId = user?.id;
+
+  const [userInterviews, latestInterviews] = await Promise.all([
+    getInterviewsByUserId(userId!),
+    getLatestInterviews({ userId: userId! })
+  ]);
+
+  const hasPastInterviews = userInterviews && userInterviews.length > 0;
+  const hasUpcomingInterviews = latestInterviews && latestInterviews.length > 0;
+
   return (
     <>
       {/* Hero Section */}
@@ -14,7 +27,7 @@ const Page = () => {
         <div className="flex flex-col gap-6 max-w-xl text-center lg:text-left">
           <h2 className="text-4xl font-extrabold leading-snug text-white md:text-5xl">
             Get Interview-Ready with AI-Powered Practice & Feedback
-          </h2>
+          </h2> 
 
           <p className="text-lg text-gray-300 md:text-xl">
             Practice on real interview questions & get instant Feedback.
@@ -48,17 +61,15 @@ const Page = () => {
         </div>
 
         <div className="rounded-xl bg-gray-900 border border-gray-700 p-8 shadow-md">
-          {dummyInterviews.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 place-items-center">
-              {dummyInterviews.map((interview) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 place-items-center">
+            {hasPastInterviews ? (
+              userInterviews?.map((interview) => (
                 <InterviewCard key={interview.id} {...interview} />
-              ))}
-            </div>
-          ) : (
-            <p className="text-center text-gray-300 mb-6">
-              You haven&apos;t taken any interviews yet
-            </p>
-          )}
+              ))
+            ) : (
+              <p className="text-gray-300">You haven&apos;t taken any interviews yet</p>
+            )}
+          </div>
 
           <div className="flex justify-center mt-8">
             <Button
@@ -70,22 +81,39 @@ const Page = () => {
           </div>
         </div>
       </section>
-
       {/* Interview Practice */}
-      <section className="px-6 lg:px-24 mt-14 mb-10">
-        <div className="flex items-center gap-2 mb-6">
-          <Video className="w-6 h-6 text-primary" />
-          <h3 className="text-2xl font-semibold text-white">Interview Practice</h3>
-        </div>
+<section className="px-6 lg:px-24 mt-14 mb-10">
+  <div className="flex items-center gap-2 mb-6">
+    <Video className="w-6 h-6 text-primary" />
+    <h3 className="text-2xl font-semibold text-white">Interview Practice</h3>
+  </div>
 
-        <div className="rounded-xl bg-gray-900 border border-gray-700 p-8 shadow-md">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 place-items-center">
-            {dummyInterviews.map((interview) => (
-              <InterviewCard key={interview.id} {...interview} />
-            ))}
-          </div>
-        </div>
-      </section>
+  <div className="rounded-xl bg-gray-900 border border-gray-700 p-8 shadow-md">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-10 place-items-center">
+      {hasUpcomingInterviews ? (
+        <>
+          {latestInterviews?.map((interview) => (
+            <InterviewCard key={interview.id} {...interview} />
+          ))}
+
+          {/* ✅ Extra card to fill blank space */}
+          <InterviewCard
+            interviewId="extra-001"
+            useId={userId}
+            role="DevOps"
+            type="Mixed"
+            techstack={["docker"]}
+            createdAt="2025-02-15"
+          />
+        </>
+      ) : (
+        <p className="text-gray-300">There are no new interview available</p>
+      )}
+    </div>
+  </div>
+</section>
+
+      
     </>
   )
 }
