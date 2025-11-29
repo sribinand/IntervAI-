@@ -4,9 +4,10 @@ import Image from 'next/image';
 import { Button } from './ui/button';
 import Link from 'next/link';
 import DisplayTechlcons from './DisplayTechlcons';
+import { id } from 'zod/v4/locales';
 
 const InterviewCard = ({
-  interviewId,
+  id,
   useId,
   role,
   type,
@@ -71,8 +72,8 @@ const InterviewCard = ({
             <Link
               href={
                 feedback
-                  ? `/interview/${interviewId}/feedback`
-                  : `/interview/${interviewId}`
+                  ? `/interview/${id}/feedback`
+                  : `/interview/${id}`
               }
             >
               {feedback ? "Check Feedback" : "View Interview"}
